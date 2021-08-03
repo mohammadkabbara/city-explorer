@@ -7,6 +7,8 @@ import Nav from 'react-bootstrap/Nav';
 import Form from 'react-bootstrap/Form';
 import FormControl from 'react-bootstrap/FormControl';
 import Button from 'react-bootstrap/Button';
+
+import Weather from './components/weather';
 class App extends React.Component {
 
   constructor(props) {
@@ -17,36 +19,64 @@ class App extends React.Component {
       lat : '',
       showMap: false,
       errorMsg : 'bad response',
-      displayErr : false
+      displayErr : false,
+      
+      weather: [],
+     
     }
   }
 
+  
 
   getLocationData = async(event) => {
     event.preventDefault();
+    console.log(process.env.REACT_APP_SERVER_URL);
     let cityName = event.target.city.value;
     console.log(cityName);
 
     let URL= `https://us1.locationiq.com/v1/search.php?key=pk.b4047dd2b66352b18ad93e8d78889b18&q=${cityName}&format=json`
+    
 
     try {
       let locResult = await axios.get(URL); 
+      
      
       this.setState({
         displayName : locResult.data[0].display_name,
         lon: locResult.data[0].lon,
         lat: locResult.data[0].lat,
-        showMap : true
+        
+        showMap : true,
+        
       })
+      this.displayWeather(locResult.data[0].lat, locResult.data[0].lon)
     }
     catch {
       this.setState({
-        displayMap : false,
+        showMap : false,
         displayErr : true
       })
     }
 
   }
+  displayWeather = async (lat, lon) => {
+    try{
+      const weather = await axios.get(`${process.env.REACT_APP_SERVER}/weather`, { params: {latitude: lat, longitude: lon, displayName: this.state.displayName}});
+      this.setState({
+        weather: weather.data
+      })
+    } catch(error){
+      this.setState({
+        // showMap: false,
+        displayErr : true
+      
+       
+      })
+    }
+  } 
+
+
+
 
 
   render() {
@@ -90,6 +120,9 @@ class App extends React.Component {
         </Navbar >
 
 
+
+
+
         
         { 
         this.state.showMap &&
@@ -97,7 +130,22 @@ class App extends React.Component {
       }
       <p>
           {this.state.displayName}
+          
         </p>
+        <p>
+          {this.state.lon}
+        </p>
+        <p>
+          {this.state.lat}
+        </p>
+        <Weather
+                  weather={this.state.weather}
+                />
+       
+      ))
+
+       
+        
 
        { 
        this.state.displayErr && 
