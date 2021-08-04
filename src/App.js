@@ -7,6 +7,9 @@ import Nav from 'react-bootstrap/Nav';
 import Form from 'react-bootstrap/Form';
 import FormControl from 'react-bootstrap/FormControl';
 import Button from 'react-bootstrap/Button';
+
+import Weather from './Components/Weather';
+import Movies from './Components/Movies'
 class App extends React.Component {
 
   constructor(props) {
@@ -17,36 +20,74 @@ class App extends React.Component {
       lat : '',
       showMap: false,
       errorMsg : 'bad response',
-      displayErr : false
+      displayErr : false,
+      
+      weather: [],
+      movies:[]
+     
     }
   }
 
+  
 
   getLocationData = async(event) => {
     event.preventDefault();
-    let cityName = event.target.city.value;
-    console.log(cityName);
+    console.log(process.env.REACT_APP_SERVER_URL);
+    let city = event.target.city.value;
+    console.log(city);
 
-    let URL= `https://us1.locationiq.com/v1/search.php?key=pk.b4047dd2b66352b18ad93e8d78889b18&q=${cityName}&format=json`
+    let URL= `https://us1.locationiq.com/v1/search.php?key=pk.b4047dd2b66352b18ad93e8d78889b18&q=${city}&format=json`
+    
 
     try {
-      let locResult = await axios.get(URL); 
-     
+      let locResult = await axios.get(URL);
       this.setState({
         displayName : locResult.data[0].display_name,
         lon: locResult.data[0].lon,
-        lat: locResult.data[0].lat,
-        showMap : true
+        lat: locResult.data[0].lat,      
+        showMap : true,
+        
       })
-    }
-    catch {
+
+
+      const urlServer = `http://localhost:3000/getWeather?lat=${this.state.lat}&lon=${this.state.lon}&cityName=${city}`
+      let weatherResult = await axios.get(urlServer)
       this.setState({
-        displayMap : false,
-        displayErr : true
+        weather : weatherResult.data,
+      
+      })
+      console.log(weatherResult, 'data from api')
+
+
+      const urlMovies = `http://localhost:3000/movies?city=${city}`
+      let moviesResult = await axios.get(urlMovies)
+      this.setState({
+        movies : moviesResult.data
       })
     }
 
-  }
+
+  
+    catch {
+      this.setState({
+        showMap : false,
+        displayErr : true,
+      
+      }
+      )
+    }
+
+
+   }
+
+  
+
+   
+  
+ 
+
+
+
 
 
   render() {
@@ -90,6 +131,9 @@ class App extends React.Component {
         </Navbar >
 
 
+
+
+
         
         { 
         this.state.showMap &&
@@ -97,7 +141,28 @@ class App extends React.Component {
       }
       <p>
           {this.state.displayName}
+          
         </p>
+        <p>
+          {this.state.lon}
+        </p>
+        <p>
+          {this.state.lat}
+        </p>
+
+
+
+
+
+
+        <Weather weather={this.state.weather} ></Weather>
+        <Movies  movies={this.state.movies} ></Movies>
+       
+      
+
+
+       
+        
 
        { 
        this.state.displayErr && 
@@ -118,3 +183,6 @@ class App extends React.Component {
 
 
 export default App;
+
+
+
