@@ -1,6 +1,8 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Card from 'react-bootstrap/Card'
+// import Card from 'react-bootstrap/Card'
+
+import WeatherAssestant from './assest/Weather';
 
 
 
@@ -14,22 +16,13 @@ class Weather extends React.Component {
                     
                     this.props.weather.map(element => {
                         return (
+                          <>
+
+                          <WeatherAssestant WeatherAssest={element}/>
+                          </>
 
 
-                        <Card style={{ border: 'groove', width: '500px' ,margin:'50px',marginLeft:'150px' ,display : 'inline-block'}}>
-  <Card.Header>The Weather</Card.Header>
-  <Card.Body>
-    <blockquote className="blockquote mb-0">
-      <p>
-        {' '}
-           {element.date}.{' '}
-      </p>
-      <footer className="blockquote-footer">
-         {element.description} 
-      </footer>
-    </blockquote>
-  </Card.Body>
-</Card>
+
                         )
                     })
                 }
