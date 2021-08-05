@@ -50,7 +50,7 @@ class App extends React.Component {
       })
 
 
-      const urlServer = `http://localhost:3000/getWeather?lat=${this.state.lat}&lon=${this.state.lon}&cityName=${city}`
+      const urlServer = `https://back-end-city-explorer.herokuapp.com/getWeather?lat=${this.state.lat}&lon=${this.state.lon}&cityName=${city}`
       let weatherResult = await axios.get(urlServer)
       this.setState({
         weather : weatherResult.data,
@@ -59,7 +59,7 @@ class App extends React.Component {
       console.log(weatherResult, 'data from api')
 
 
-      const urlMovies = `http://localhost:3000/movies?city=${city}`
+      const urlMovies = `https://back-end-city-explorer.herokuapp.com/movies?city=${city}`
       let moviesResult = await axios.get(urlMovies)
       this.setState({
         movies : moviesResult.data
