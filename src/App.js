@@ -8,7 +8,7 @@ import Form from 'react-bootstrap/Form';
 import FormControl from 'react-bootstrap/FormControl';
 import Button from 'react-bootstrap/Button';
 
-import Weather from './components/weather';
+import Weather from './Components/Weather'
 class App extends React.Component {
 
   constructor(props) {
@@ -49,7 +49,14 @@ class App extends React.Component {
         showMap : true,
         
       })
-      this.displayWeather(locResult.data[0].lat, locResult.data[0].lon)
+      // this.displayWeather(locResult.data[0].lat, locResult.data[0].lon)
+
+      let wheaterURL=`${process.env.REACT_APP_SERVER_URL}/weather?searchQuery=${cityName}`
+      let wheatherData=await axios.get(wheaterURL);
+      this.setState({
+        wheatherInfo :wheatherData.data
+      })
+      console.log(wheatherData.data);
     }
     catch {
       this.setState({
@@ -59,22 +66,6 @@ class App extends React.Component {
     }
 
   }
-  displayWeather = async (lat, lon) => {
-    try{
-      const weather = await axios.get(`${process.env.REACT_APP_SERVER}/weather`, { params: {latitude: lat, longitude: lon, displayName: this.state.displayName}});
-      this.setState({
-        weather: weather.data
-      })
-    } catch(error){
-      this.setState({
-        // showMap: false,
-        displayErr : true
-      
-       
-      })
-    }
-  } 
-
 
 
 
@@ -138,11 +129,11 @@ class App extends React.Component {
         <p>
           {this.state.lat}
         </p>
-        <Weather
+        {/* <Weather
                   weather={this.state.weather}
                 />
-       
-      ))
+        */}
+        {/* <Weather weather={this.state.weather} ></Weather> */}
 
        
         
